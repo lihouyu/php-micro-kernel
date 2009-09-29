@@ -15,6 +15,7 @@ function load_plugin_sysconf() {
     // Initialize session
 
     $my_dir = dirname(__FILE__);
+    include_once($my_dir.DS.'sysconf.config.php');
     include_once($my_dir.DS.'sysconf.php');
 }
 
