@@ -140,8 +140,8 @@ class ActiveObject {
      * @param bool $stat_new Whether the RecordObject is newly created or loaded from an existing record
      */
     public function __construct($aikey_val = false, $stat_new = true) {
-        $sys_configs =& $GLOBALS['sys_configs'];
-        $table_cache_dir = $sys_configs['table_cache_dir'];
+        $global_db_configs =& $GLOBALS['db_configs'];
+        $table_cache_dir = $global_db_configs['table_cache_dir'];
         $this->class_name = get_class($this);
 
         /* Get default MySQLi connection instance */
@@ -157,7 +157,7 @@ class ActiveObject {
         /* Load table info */
         //$this->table_object =& $this->_getRecordTable($this->_table_name);
         $table_object_cache_file = $table_cache_dir.DS.$this->table_name.'.cache';
-        if ($sys_configs['enable_table_cache']) {
+        if ($global_db_configs['enable_table_cache']) {
             if (file_exists($table_object_cache_file)) {
                 $table_object_cache = file_get_contents($table_object_cache_file);
                 $this->table_object = unserialize($table_object_cache);
@@ -185,7 +185,7 @@ class ActiveObject {
             $rs_table->free();
         }
         if (!$this->table_object) return false;
-        if ($sys_configs['enable_table_cache'] &&
+        if ($global_db_configs['enable_table_cache'] &&
             is_writable($table_object_cache_file)) {
             file_put_contents($table_object_cache_file, serialize($this->table_object));
         }
