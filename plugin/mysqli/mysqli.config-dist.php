@@ -24,6 +24,7 @@ $GLOBALS['db_configs'] = array(
         'charset'   => 'utf8',
         'prefix'    => 'pr3_',
         'default'   => false
-    )
+    ),
  */
+    'enable_table_cache'    => false
 ); // $GLOBALS['db_configs']
