@@ -2,12 +2,8 @@
 if (!defined('LPLUGINS')) die('Access violation error!');
 
 $sys_paths = array(
-	'ext' => ROOT.DS.'ext',
     'inc' => ROOT.DS.'include',
-    'mdl' => ROOT.DS.'models',
-    'ctl' => ROOT.DS.'controllers',
-    'plg' => ROOT.DS.'plugin',
-    'tpl' => ROOT.DS.'templates'
+    'plg' => ROOT.DS.'plugin'
 );
 
 include_once($sys_paths['inc'].DS.'utils.php');
