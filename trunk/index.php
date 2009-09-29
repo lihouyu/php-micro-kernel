@@ -1,5 +1,5 @@
 <?php
-define('PMVCR3', 1);
+define('LPLUGINS', 1);
 
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', dirname(__FILE__));

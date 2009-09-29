@@ -1,5 +1,5 @@
 <?php
-if (!defined('PMVCR3')) die('Access violation error!');
+if (!defined('LPLUGINS')) die('Access violation error!');
 
 function load_plugin_mysqli() {
     $my_dir = dirname(__FILE__);
