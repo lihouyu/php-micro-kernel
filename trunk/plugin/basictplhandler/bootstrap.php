@@ -4,6 +4,7 @@ if (!defined('LPLUGINS')) die('Access violation error!');
 function load_plugin_basictplhandler() {
     $my_dir = dirname(__FILE__);
     include_once($my_dir.DS.'template.config.php');
+    include_once($my_dir.DS.'tplhandler.php');
 
     $GLOBALS['tpl_vars'] = array();
 }
