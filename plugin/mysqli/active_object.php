@@ -694,6 +694,17 @@ class ActiveObject {
     // Static data accessor
 
     /* Pagination */
+
+    /**
+     * Get paginated data by class name
+     *
+     * @param string $class_name The class name of the object
+     * @param string $where SQL condition
+     * @param array $params Parameters for SQL variable substitution
+     * @param string $more_sql ORDER or GROUP statements
+     * @param string $page_param The name of the parameter indicates the page number
+     * @return array
+     */
     final public static function paginate($class_name, $where = false,
         $params = array(), $more_sql = false, $page_param = 'p') {
         $result = array();
@@ -716,6 +727,7 @@ class ActiveObject {
         } else {
             return false;
         }
-    }
+    } // ActiveObject::paginate($class_name, $where = false,
+      //     $params = array(), $more_sql = false, $page_param = 'p')
     // Pagination
 }
