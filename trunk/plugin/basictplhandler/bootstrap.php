@@ -1,0 +1,34 @@
+<?php
+if (!defined('LPLUGINS')) die('Access violation error!');
+
+function load_plugin_basictplhandler() {
+    $my_dir = dirname(__FILE__);
+    include_once($my_dir.DS.'template.config.php');
+
+    $GLOBALS['tpl_vars'] = array();
+}
+
+function render_tpl($tpl_context) {
+    $my_dir = dirname(__FILE__);
+
+    if (sizeof($GLOBALS['tpl_vars']) > 0) {
+        foreach ($GLOBALS['tpl_vars'] as $key => $var) {
+            $$key = $var;
+        }
+    }
+
+    $tpl_path = $GLOBALS['tpl_configs']['tpl_path'];
+    $tpl_ext = $GLOBALS['tpl_configs']['tpl_ext'];
+    
+    if ($GLOBALS['tpl_configs']['use_sysconf']) {
+        $tpl_path = $GLOBALS['sys_configs']['tpl_path'];
+        $tpl_ext = $GLOBALS['sys_configs']['tpl_ext'];
+    }
+
+    include_once($my_dir.DS.$tpl_path.DS.$tpl_context.$tpl_ext);
+}
+
+attach_plugin('onInitialize', 'basictplhandler', 'load_plugin_basictplhandler');
+
+register_signal('onTplRender');
+attach_plugin('onTplRender', 'basictplhandler', 'render_tpl', 1);
