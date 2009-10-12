@@ -696,8 +696,20 @@ class ActiveObject {
     /* Pagination */
 
     /**
+     * The general list row count
+     *
+     * @access private
+     * @static
+     * @var integet
+     */
+    private static $_list_size = 15;
+
+    /**
      * Get paginated data by class name
      *
+     * @access public
+     * @static
+     * @final
      * @param string $class_name The class name of the object
      * @param string $where SQL condition
      * @param array $params Parameters for SQL variable substitution
@@ -707,6 +719,8 @@ class ActiveObject {
      */
     final public static function paginate($class_name, $where = false,
         $params = array(), $more_sql = false, $page_param = 'p') {
+        self::_list_size();
+        
         $result = array();
 
         $record_num = self::count($class_name, $where, $params);
@@ -714,11 +728,11 @@ class ActiveObject {
             $curr_page = get_var($page_param, false, 1);
             $result['pager'] =& self::_gen_pager_links($curr_page, $obj_cnt, $page_param);
 
-            $start_index = intval(PAGE_SIZE) * ($curr_page - 1);
+            $start_index = self::$_list_size * ($curr_page - 1);
             if ($more_sql == false) {
                 $more_sql = '';
             }
-            $more_sql .= " LIMIT ".$start_index.", ".PAGE_SIZE;
+            $more_sql .= " LIMIT ".$start_index.", ".self::$_list_size;
             $result['data'] = ActiveObject::find_all($class_name, $where, $params, $more_sql);
         }
 
@@ -728,6 +742,202 @@ class ActiveObject {
             return false;
         }
     } // ActiveObject::paginate($class_name, $where = false,
-      //     $params = array(), $more_sql = false, $page_param = 'p')
+      //    $params = array(), $more_sql = false, $page_param = 'p')
+
+    /**
+     * Generate record data by page based on given SQL
+     *
+     * @access public
+     * @static
+     * @final
+     * @param string $sql The main SQL for query records
+     * @param array $params Parameters used for replacing place holders in the SQL
+     * @param string $more_sql Additional SQL conditions to sort, group or limit records selection
+     * @param string $page_param The parameter name for identifying current page number
+     * @return array
+     */
+    final public static function paginate_sql($sql, $params = array(),
+        $more_sql = false, $page_param = 'p') {
+        if (!self::$_mydb) self::$_mydb = MyDb::get_instance();
+        self::_list_size();
+        $result = array('pager' => false, 'data' => false);
+
+        // get total record num
+        $sql_part = spliti('from', $sql);
+        $count_sql = "SELECT COUNT(*) FROM".$sql_part[1];
+        $rs = self::$_mydb->exec_query($count_sql, $params);
+        if (!$rs) {
+            $rec_cnt = 0;
+        } else {
+            $row = $rs->fetch_row();
+            $rs->free();
+            $rec_cnt = $row[0];
+        }
+
+        if ($rec_cnt > 0) {
+            // get current page
+            $curr_page = get_var($page_param, false, 1);
+            $result['pager'] =& self::_gen_pager_links($curr_page, $rec_cnt, $page_param);
+
+            // get start index
+            $start_index = self::$_list_size * ($curr_page - 1);
+            // generate sql
+            if ($more_sql !== false) {
+                $sql .= " ".$more_sql;
+            }
+            $sql .= " LIMIT ".$start_index.", ".self::$_list_size;
+            // get objects
+            $rs = self::$_mydb->exec_query($sql, $params);
+            if ($rs) {
+                while ($obj = $rs->fetch_object()) {
+                    $result['data'][] = $obj;
+                }
+                $rs->free();
+            }
+        }
+
+        if (!$result['pager'] || !$result['data']) {
+            return false;
+        } else {
+            return $result;
+        }
+    } // ActiveObject::paginate_sql($sql, $params = array(),
+      //    $more_sql = false, $page_param = 'p')
+
+    /**
+     * Generate record data by page based on given SQL
+     * and with a custom SQL for counting record number
+     *
+     * @access public
+     * @static
+     * @final
+     * @param string $sql The main SQL for query records
+     * @param string $count_sql The SQL for counting record number
+     * @param array $params Parameters used for replacing place holders in the SQL
+     * @param array $count_params Parameters used for replacing place holders in the COUNT SQL
+     * @param string $more_sql Additional SQL conditions to sort, group or limit records selection
+     * @param string $page_param The parameter name for identifying current page number
+     * @return array
+     */
+    final public static function paginate_sql_count($sql, $count_sql,
+        $params = array(), $count_params = array(), $more_sql = false, $page_param = 'p') {
+        if (!self::$_mydb) self::$_mydb = MyDb::get_instance();
+        self::_list_size();
+        $result = array('pager' => false, 'data' => false);
+
+        // get total record num
+        $rs = self::$_mydb->exec_query($count_sql, $count_params);
+        if (!$rs) {
+            $rec_cnt = 0;
+        } else {
+            $row = $rs->fetch_row();
+            $rs->free();
+            $rec_cnt = $row[0];
+        }
+
+        if ($rec_cnt > 0) {
+            // get current page
+            $curr_page = get_var($page_param, false, 1);
+            $result['pager'] =& self::_gen_pager_links($curr_page, $rec_cnt, $page_param);
+
+            // get start index
+            $start_index = self::$_list_size * ($curr_page - 1);
+            // generate sql
+            if ($more_sql !== false) {
+                $sql .= " ".$more_sql;
+            }
+            $sql .= " LIMIT ".$start_index.", ".self::$_list_size;
+            // get objects
+            $rs = self::$_mydb->exec_query($sql, $params);
+            if ($rs) {
+                while ($obj = $rs->fetch_object()) {
+                    $result['data'][] = $obj;
+                }
+                $rs->free();
+            }
+        }
+
+        if (!$result['pager'] || !$result['data']) {
+            return false;
+        } else {
+            return $result;
+        }
+    } // ActiveObject::paginate_sql_count($sql, $count_sql,
+      //    $params = array(), $count_params = array(), $more_sql = false, $page_param = 'p')
+
+    /**
+     * Generate URL for page link
+     *
+     * @access private
+     * @static
+     * @param integer $curr_page The current page
+     * @param integer $rec_cnt Total record number of the selection
+     * @param string $page_param The parameter name for identifying current page number
+     * @return array
+     */
+    private static function _gen_pager_links($curr_page, $rec_cnt, $page_param) {
+        $pager = false;
+
+        // get total page num
+        $pages = ceil($rec_cnt / self::$_list_size);
+
+        // correct page
+        if ($pages < 1) $pages = 1;
+        if ($curr_page > $pages) $curr_page = $pages;
+        if ($curr_page < 1) $curr_page = 1;
+        // get all pages
+        $prev_page = ($curr_page == 1)?1:$curr_page - 1;
+        $next_page = ($curr_page == $pages)?$pages:$curr_page + 1;
+        // set pages
+        $pager['first'] = self::_gen_pager_uri(1, $page_param);
+        $pager['prev'] = self::_gen_pager_uri($prev_page, $page_param);
+        $pager['next'] = self::_gen_pager_uri($next_page, $page_param);
+        $pager['last'] = self::_gen_pager_uri($pages, $page_param);
+        $pager['curr'] = $curr_page;
+        $pager['total'] = $pages;
+
+        return $pager;
+    } // ActiveObject::_gen_pager_links($curr_page, $rec_cnt, $page_param)
+
+    /**
+     * Generate URL query string
+     *
+     * @access private
+     * @static
+     * @param <type> $page
+     * @param <type> $page_param
+     * @return string
+     */
+    private static function _gen_pager_uri($page, $page_param) {
+        $uri = 'index.php?'.$page_param.'='.$page;
+
+        if (isset($_GET)){
+            foreach ($_GET as $key => $value){
+                if ($key != $page_param){
+                    $uri .= '&amp;'.$key.'='.urlencode($value);
+                }
+            }
+        }
+        if (isset($_POST)){
+            foreach ($_POST as $key => $value){
+                if ($key != $page_param){
+                    $uri .= '&amp;'.$key.'='.urlencode($value);
+                }
+            }
+        }
+
+        return $uri;
+    } // ActiveObject::_gen_pager_uri($page, $page_param)
+
+    /**
+     * Initialize list size
+     */
+    private static function _list_size() {
+        $global_sys_configs =& $GLOBALS['sys_configs'];
+        if (isset($global_sys_configs['list_size']) &&
+            is_numeric($global_sys_configs['list_size'])) {
+            self::$_list_size = intval($global_sys_configs['list_size']);
+        }
+    }
     // Pagination
 }
