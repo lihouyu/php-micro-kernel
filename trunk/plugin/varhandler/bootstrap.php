@@ -37,4 +37,4 @@ function load_plugin_varhandler() {
     include_once($my_dir.DS.'var_handler.php');
 }
 
-attach_plugin('onInitialize', 'varhandler', 'load_plugin_varhandler', 5);
+attach_event('onInitialize', 'varhandler', 'load_plugin_varhandler', 5);

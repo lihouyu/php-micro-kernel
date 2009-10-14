@@ -37,5 +37,5 @@ function unload_plugin_mysqli() {
     MyDb::close_all();
 }
 
-attach_plugin('onInitialize', 'mysqli', 'load_plugin_mysqli', 8);
-attach_plugin('onFinalize', 'mysqli', 'unload_plugin_mysqli', 8);
+attach_event('onInitialize', 'mysqli', 'load_plugin_mysqli', 8);
+attach_event('onFinalize', 'mysqli', 'unload_plugin_mysqli', 8);

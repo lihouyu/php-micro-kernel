@@ -44,7 +44,7 @@ $GLOBALS['_event_params'] = array();
  * @param string $entry_func The name of the entry function
  * @param integer $priority Plugin load priority
  */
-function attach_plugin($signal, $name, $entry_func, $priority = 10) {
+function attach_event($signal, $name, $entry_func, $priority = 10) {
     $global__signals =& $GLOBALS['_signals'];
     if (isset($global__signals[$signal])) {
         if (!isset($global__signals[$signal][$priority]))
@@ -58,7 +58,7 @@ function attach_plugin($signal, $name, $entry_func, $priority = 10) {
         }
         $global__lazy_signals[$signal][$priority][] = array($name, $entry_func);
     }
-} // attach_plugin($event, $name, $entry_func, $priority)
+} // attach_event($signal, $name, $entry_func, $priority)
 
 /**
  * Load plugins attached to a specified signal

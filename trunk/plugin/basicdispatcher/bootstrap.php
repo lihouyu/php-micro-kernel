@@ -38,4 +38,4 @@ function run_dispatch() {
     include_once($my_dir.DS.$app_path.DS.$module.$file_ext);
 }
 
-attach_plugin('onInitialize', 'basicdispatcher', 'run_dispatch', 99);
+attach_event('onInitialize', 'basicdispatcher', 'run_dispatch', 99);

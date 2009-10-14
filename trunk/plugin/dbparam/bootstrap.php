@@ -38,4 +38,4 @@ function load_plugin_dbparam() {
     // Load database parameters
 }
 
-attach_plugin('onInitialize', 'dbparam', 'load_plugin_dbparam');
+attach_event('onInitialize', 'dbparam', 'load_plugin_dbparam');
