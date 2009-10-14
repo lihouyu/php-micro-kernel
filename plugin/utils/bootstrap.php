@@ -25,4 +25,4 @@ function load_plugin_utils() {
     include_once($my_dir.DS.'utils.php');
 }
 
-attach_plugin('onInitialize', 'utils', 'load_plugin_utils', 2);
+attach_event('onInitialize', 'utils', 'load_plugin_utils', 2);

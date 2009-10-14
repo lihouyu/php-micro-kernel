@@ -48,7 +48,7 @@ function render_tpl($tpl_context) {
     include_once($my_dir.DS.$tpl_path.DS.$tpl_context.$tpl_ext);
 }
 
-attach_plugin('onInitialize', 'basictplhandler', 'load_plugin_basictplhandler');
+attach_event('onInitialize', 'basictplhandler', 'load_plugin_basictplhandler');
 
 register_signal('onTplRender');
-attach_plugin('onTplRender', 'basictplhandler', 'render_tpl', 1);
+attach_event('onTplRender', 'basictplhandler', 'render_tpl', 1);

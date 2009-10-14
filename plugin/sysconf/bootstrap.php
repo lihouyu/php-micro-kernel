@@ -26,4 +26,4 @@ function load_plugin_sysconf() {
     include_once($my_dir.DS.'sysconf.php');
 }
 
-attach_plugin('onInitialize', 'sysconf', 'load_plugin_sysconf', 3);
+attach_event('onInitialize', 'sysconf', 'load_plugin_sysconf', 3);
