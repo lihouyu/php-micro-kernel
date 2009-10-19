@@ -76,7 +76,7 @@ function raise_signal($signal) {
                 if (sizeof($plugin_metas) == 0) continue;
                 foreach ($plugin_metas as $plugin_meta) {
                     $plugin_entry_func = $plugin_meta[1];
-                    if ($global__event_params[$signal][$plugin_entry_func]) {
+                    if (@isset($global__event_params[$signal][$plugin_entry_func])) {
                         $plugin_entry_func($global__event_params[$signal][$plugin_entry_func]);
                     } else {
                         $plugin_entry_func();
