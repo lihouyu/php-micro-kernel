@@ -485,8 +485,8 @@ class ActiveObject {
                         $t_class_name_s = transform_class_name($class_name);
                         $ai_attr_name = $this->table_object->aikey;
                         $ai_attr_name_s = $object->table_object->aikey;
-                        $table_name_s = $object->table_name;
-                        $table_name_r = $t_class_name.'_'.$t_class_name_s;
+                        $table_name_s = $this->prefix.$object->table_name;
+                        $table_name_r = $this->prefix.$t_class_name.'_'.$t_class_name_s;
                         $id_r = $t_class_name.'_id';
                         $id_r_s = $t_class_name_s.'_id';
                         $sql = "SELECT `$table_name_s`.* FROM `$table_name_s`, "
@@ -554,8 +554,8 @@ class ActiveObject {
                     $t_class_name_m = transform_class_name($class_name);
                     $ai_attr_name = $this->table_object->aikey;
                     $ai_attr_name_m = $object->table_object->aikey;
-                    $table_name_m = $object->table_name;
-                    $table_name_r = $t_class_name_m.'_'.$t_class_name;
+                    $table_name_m = $this->prefix.$object->table_name;
+                    $table_name_r = $this->prefix.$t_class_name_m.'_'.$t_class_name;
                     $id_r = $t_class_name.'_id';
                     $id_r_m = $t_class_name_m.'_id';
                     $sql = "SELECT `$table_name_m`.* FROM `$table_name_m`, "
