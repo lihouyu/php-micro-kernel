@@ -20,9 +20,10 @@
 
 if (!defined('LPLUGINS')) die('Access violation error!');
 
-/**
- * ACL configurations
- */
-$GLOBALS['acl_configs'] = array(
-    'user_class_name' => 'User'
-); // $GLOBALS['acl_configs']
+final class Role extends ActiveObject {
+    public function __construct($aikey_val = false, $stat_new = true) {
+        $global_acl_configs =& $GLOBALS['acl_configs'];
+        $this->belong_to_many = array($global_acl_configs['user_class_name']);
+        parent::__construct($aikey_val, $stat_new);
+    }
+}
