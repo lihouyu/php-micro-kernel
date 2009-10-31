@@ -10,14 +10,6 @@ DROP TABLE IF EXISTS `{$prefix}roles`;
 CREATE TABLE `{$prefix}roles` (
     `id` int(11) NOT NULL auto_increment,
     `role_name` varchar(255) NOT NULL,
-    PRIMARY KEY  (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
-DROP TABLE IF EXISTS `{$prefix}assigned_actions`;
-CREATE TABLE `{$prefix}assigned_actions` (
-    `id` int(11) NOT NULL auto_increment,
-    `role_id` int(11) NOT NULL,
     `actions` text NOT NULL,
-    PRIMARY KEY  (`id`),
-    KEY (`role_id`)
+    PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;

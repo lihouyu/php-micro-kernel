@@ -21,8 +21,11 @@
 if (!defined('LPLUGINS')) die('Access violation error!');
 
 /**
- * ACL configurations
+ * Registered role actions
  */
-$GLOBALS['acl_configs'] = array(
-    'user_class_name' => 'User'
-); // $GLOBALS['acl_configs']
+$GLOBALS['_acl_actions'] = array();
+
+function register_action($act_name, $act_text) {
+    $global__acl_actions =& $GLOBALS['_acl_actions'];
+    $global__acl_actions[$act_name] = $act_text;
+}
