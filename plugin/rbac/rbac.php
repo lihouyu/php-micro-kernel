@@ -25,6 +25,12 @@ if (!defined('LPLUGINS')) die('Access violation error!');
  */
 $GLOBALS['_acl_actions'] = array();
 
+/**
+ * Register an action which can be assinged to roles
+ *
+ * @param string $act_name The unix name style name of the action
+ * @param string $act_text A descriptive phrase
+ */
 function register_action($act_name, $act_text) {
     $global__acl_actions =& $GLOBALS['_acl_actions'];
     $global__acl_actions[$act_name] = $act_text;
