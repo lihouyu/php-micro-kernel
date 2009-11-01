@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS `{$prefix}{$user_class_name}_role`;
-CREATE TABLE `{$prefix}{$user_class_name}_role` (
+DROP TABLE IF EXISTS `{$prefix}role_{$user_class_name}`;
+CREATE TABLE `{$prefix}role_{$user_class_name}` (
     `{$user_class_name}_id` int(11) NOT NULL,
     `role_id` int(11) NOT NULL,
     KEY (`{$user_class_name}_id`),
