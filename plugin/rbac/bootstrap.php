@@ -23,6 +23,8 @@ if (!defined('LPLUGINS')) die('Access violation error!');
 function load_plugin_rbac() {
     $my_dir = dirname(__FILE__);
     include_once($my_dir.DS.'rbac.config.php');
+    include_once($my_dir.DS.'models'.DS.'role.php');
+    include_once($my_dir.DS.'rbac.php');
 }
 
 attach_event('onInitialize', 'rbac', 'load_plugin_rbac');
