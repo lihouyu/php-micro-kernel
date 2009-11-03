@@ -579,6 +579,30 @@ class ActiveObject {
         }
     } // ActiveObject->load_parents($target_objs = array())
 
+    /**
+     * Fix relation with children and parents
+     *
+     * @access public
+     * @param array $target_objs Target class name along with object IDs to be fixed.
+     */
+    public function fix_relations($target_objs = array()) {
+        if (!is_array($target_objs)) return false;
+        $this->errmsg = '';
+        
+        if (sizeof($target_objs) > 0) {
+            // Only fix relation with these given objects.
+            foreach ($target_obje as $class_name => $obj_ids) {
+                if (!$obj_ids) {
+                    $this->errmsg .= 'Unable to fix relation with '.$class_name
+                        .' with invalid object IDs!'."\n";
+                    continue;
+                }
+            }
+        } else {
+            // A full relation fix with all related classes.
+        }
+    } // ActiveObject->fix_relations($target_objs = array())
+
     /* Static data accessor */
     /**
      * The MySQLi connection instance holder for static accessors
