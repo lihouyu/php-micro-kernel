@@ -1,4 +1,5 @@
-LoadingPlugins is a lightweight yet very extensible PHP framework
+PHP Micro Kernel is a set of very simple plugin loading scripts which can help
+make applications from tiny to vast.
 
 Developer:
     HouYu Li <karadog@gmail.com>
