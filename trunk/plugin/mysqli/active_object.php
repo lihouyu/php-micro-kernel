@@ -626,9 +626,13 @@ class ActiveObject {
                     
                     $t_class_name = transform_class_name($this->class_name);
                     $t_class_name_s = transform_class_name($class_name);
-                    $id_r = $t_class_name.'_id';
                     $ai_attr_name = $this->table_object->aikey;
                     $ai_attr_name_s = $object->table_object->aikey;
+                    $table_name_s = $this->prefix.$object->table_name;
+                    $table_name_r = $this->prefix.$t_class_name.'_'.$t_class_name_s;
+                    $id_r = $t_class_name.'_id';
+                    $id_r_s = $t_class_name_s.'_id';
+                    
                     if (sizeof($obj_ids) > 1) {
                     	$id_param = array();
                     	$s_obj_ids = "";
@@ -636,27 +640,17 @@ class ActiveObject {
                     	   $s_obj_ids .= ",?";
                     	   $id_param[] = $id;
                     	}
-                    	$id_where = " AND `$ai_attr_name_s` IN (".substr($s_obj_ids, 1).")";
+                    	$id_where = "`$ai_attr_name_s` IN (".substr($s_obj_ids, 1).")";
                     } else {
-                    	$id_where = " AND `$ai_attr_name_s`=?";
+                    	$id_where = "`$ai_attr_name_s`=?";
                         $id_param = array($obj_ids[0]);
                     }
                     
 	                if (in_array($this->class_name, $object->belong_to)) {
-	                    $t_class_name = transform_class_name($this->class_name);
-	                    $id_r = $t_class_name.'_id';
-	                    $ai_attr_name = $this->table_object->aikey;
-	                    foreach ($obj_ids as $obj_id) {
-	                    	if (!is_numeric($obj_id)) {
-	                    	    $this->errmsg .= 'Unable to fix relation with '.$class_name
-                                    .' with invalid object ID '.$obj_ids.'!'."\n";
-                                continue;
-	                    	}
-	                    	$target_obj = new $class_name($obj_id);
-	                    	$target_obj->$id_r = $this->$ai_attr_name;
-	                    	$target_obj->save();
-	                    	unset($target_obj);
-	                    }
+                        $sql = "UPDATE `$table_name_s` SET `$id_r`=? WHERE $id_where";
+                        $rs = $this->mydb->exec_query($sql, 
+                            array_merge(array($this->$ai_attr_name), 
+                                $id_param));
 	                } else if (in_array($this->class_name, $object->belong_to_many)) {
                         $t_class_name = transform_class_name($this->class_name);
                         $t_class_name_s = transform_class_name($class_name);
