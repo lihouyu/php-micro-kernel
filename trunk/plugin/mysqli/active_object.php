@@ -597,9 +597,94 @@ class ActiveObject {
                         .' with invalid object IDs!'."\n";
                     continue;
                 }
+                if (in_array($class_name, $this->has_one)) {
+                    if (!is_numeric($obj_ids)) {
+                        $this->errmsg .= 'Unable to fix relation with '.$class_name
+                            .' with invalid object ID '.$obj_ids.'!'."\n";
+                        continue;
+                    }
+                	$object = new $class_name($obj_ids);
+	                if (in_array($this->class_name, $object->belong_to)) {
+	                    $t_class_name = transform_class_name($this->class_name);
+                        $id_r = $t_class_name.'_id';
+	                    $ai_attr_name = $this->table_object->aikey;
+	                    $object->$id_r = $this->$ai_attr_name;
+	                    $object->save();
+	                } else {
+	                    $this->errmsg = 'Broken relation: '.$this->class_name
+	                        .' has_one '.$class_name.'!'."\n";
+	                }
+	                unset($object);
+                }
+                if (in_array($class_name, $this->has_many)) {
+                    if (!is_array($obj_ids)) {
+                        $this->errmsg .= 'Unable to fix relation with '.$class_name
+                            .' with invalid type of object IDs!'."\n";
+                        continue;
+                    }
+                    $object = new $class_name();
+                    
+                    $t_class_name = transform_class_name($this->class_name);
+                    $t_class_name_s = transform_class_name($class_name);
+                    $id_r = $t_class_name.'_id';
+                    $ai_attr_name = $this->table_object->aikey;
+                    $ai_attr_name_s = $object->table_object->aikey;
+                    if (sizeof($obj_ids) > 1) {
+                    	$id_param = array();
+                    	$s_obj_ids = "";
+                    	foreach ($obj_ids as $id) {
+                    	   $s_obj_ids .= ",?";
+                    	   $id_param[] = $id;
+                    	}
+                    	$id_where = " AND `$ai_attr_name_s` IN (".substr($s_obj_ids, 1).")";
+                    } else {
+                    	$id_where = " AND `$ai_attr_name_s`=?";
+                        $id_param = array($obj_ids[0]);
+                    }
+                    
+	                if (in_array($this->class_name, $object->belong_to)) {
+	                    $t_class_name = transform_class_name($this->class_name);
+	                    $id_r = $t_class_name.'_id';
+	                    $ai_attr_name = $this->table_object->aikey;
+	                    foreach ($obj_ids as $obj_id) {
+	                    	if (!is_numeric($obj_id)) {
+	                    	    $this->errmsg .= 'Unable to fix relation with '.$class_name
+                                    .' with invalid object ID '.$obj_ids.'!'."\n";
+                                continue;
+	                    	}
+	                    	$target_obj = new $class_name($obj_id);
+	                    	$target_obj->$id_r = $this->$ai_attr_name;
+	                    	$target_obj->save();
+	                    	unset($target_obj);
+	                    }
+	                } else if (in_array($this->class_name, $object->belong_to_many)) {
+                        $t_class_name = transform_class_name($this->class_name);
+                        $t_class_name_s = transform_class_name($class_name);
+                        $ai_attr_name = $this->table_object->aikey;
+                        $ai_attr_name_s = $object->table_object->aikey;
+                        $table_name_s = $this->prefix.$object->table_name;
+                        $table_name_r = $this->prefix.$t_class_name.'_'.$t_class_name_s;
+                        $id_r = $t_class_name.'_id';
+                        $id_r_s = $t_class_name_s.'_id';
+                        $sql = "SELECT `$table_name_s`.* FROM `$table_name_s`, "
+                            ."`$table_name_r` WHERE "
+                            ."`$table_name_s`.`$ai_attr_name_s`=`$table_name_r`.`$id_r_s` "
+                            ."AND `$table_name_r`.`$id_r`=?";
+
+                        $rs = $this->mydb->exec_query($sql, array($this->$ai_attr_name));
+                    } else {
+                        $this->errmsg = 'Broken relation: '.$this->class_name
+                            .' has_many '.$class_name.'!'."\n";
+                    }
+	                unset($object);
+                }
+                if (in_array($class_name, $this->belong_to)) {
+                    
+                }
+                if (in_array($class_name, $this->belong_to_many)) {
+                    
+                }
             }
-        } else {
-            // A full relation fix with all related classes.
         }
     } // ActiveObject->fix_relations($target_objs = array())
 
