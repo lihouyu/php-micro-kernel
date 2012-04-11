@@ -591,7 +591,7 @@ class ActiveObject {
 
         if (sizeof($target_objs) > 0) {
             // Only fix relation with these given objects.
-            foreach ($target_obje as $class_name => $obj_ids) {
+            foreach ($target_objs as $class_name => $obj_ids) {
                 if (!$obj_ids) {
                     $this->errmsg .= 'Unable to fix relation with '.$class_name
                         .' with invalid object IDs!'."\n";
